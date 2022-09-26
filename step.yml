@@ -1,0 +1,46 @@
+title: Restore SPM Cache (Beta)
+summary: Restores cached Swift Package Manager dependencies. This Step needs to be used in combination with **Save SPM Cache**.
+description: |
+  Restores cached Swift Package Manager dependencies. This Step needs to be used in combination with **Save SPM Cache**.
+
+  This Step is based on [key-based caching](https://devcenter.bitrise.io/en/builds/caching/key-based-caching.html) and sets up the cache key and path automatically for SPM dependencies. If you'd like to change the cache keys, you might want to use the generic [Restore cache](https://github.com/bitrise-steplib/bitrise-step-restore-cache) Step instead.
+
+  #### Related steps
+
+  [Save SPM cache](https://github.com/bitrise-steplib/bitrise-step-save-spm-cache/)
+
+  [Restore cache](https://github.com/bitrise-steplib/bitrise-step-restore-cache/)
+
+website: https://github.com/bitrise-steplib/bitrise-step-restore-spm-cache
+source_code_url: https://github.com/bitrise-steplib/bitrise-step-restore-spm-cache
+support_url: https://github.com/bitrise-steplib/bitrise-step-restore-spm-cache/issues
+
+project_type_tags:
+- ios
+- cordova
+- ionic
+- react-native
+- flutter
+type_tags:
+- utility
+
+run_if: .IsCI
+is_skippable: true
+
+toolkit:
+  go:
+    package_name: github.com/bitrise-steplib/bitrise-step-restore-spm-cache
+
+deps:
+  brew:
+  - name: zstd
+
+inputs:
+- verbose: "false"
+  opts:
+    title: Verbose logging
+    summary: Enable logging additional information for troubleshooting
+    is_required: true
+    value_options:
+    - "true"
+    - "false"

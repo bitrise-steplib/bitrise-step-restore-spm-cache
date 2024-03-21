@@ -24,6 +24,7 @@ var keys = []string{
 
 type Input struct {
 	Verbose bool `env:"verbose,required"`
+	Retries int  `env:"retries,required"`
 }
 
 type RestoreCacheStep struct {
@@ -62,8 +63,9 @@ func (step RestoreCacheStep) Run() error {
 
 	restorer := cache.NewRestorer(step.envRepo, step.logger, step.cmdFactory)
 	return restorer.Restore(cache.RestoreCacheInput{
-		StepId:  stepId,
-		Verbose: input.Verbose,
-		Keys:    keys,
+		StepId:         stepId,
+		Verbose:        input.Verbose,
+		Keys:           keys,
+		NumFullRetries: input.Retries,
 	})
 }

@@ -61,7 +61,7 @@ func (step RestoreCacheStep) Run() error {
 
 	step.logger.EnableDebugLog(input.Verbose)
 
-	restorer := cache.NewRestorer(step.envRepo, step.logger, step.cmdFactory)
+	restorer := cache.NewRestorer(step.envRepo, step.logger, step.cmdFactory, nil)
 	return restorer.Restore(cache.RestoreCacheInput{
 		StepId:         stepId,
 		Verbose:        input.Verbose,

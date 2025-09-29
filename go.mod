@@ -3,8 +3,8 @@ module github.com/bitrise-steplib/steps-restore-spm-cache
 go 1.17
 
 require (
-	github.com/bitrise-io/go-steputils/v2 v2.0.0-alpha.34
-	github.com/bitrise-io/go-utils/v2 v2.0.0-alpha.23
+	github.com/bitrise-io/go-steputils/v2 v2.0.0-alpha.40
+	github.com/bitrise-io/go-utils/v2 v2.0.0-alpha.26
 )
 
 require (

@@ -3,6 +3,7 @@ package step
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/bitrise-io/go-steputils/v2/cache"
 	"github.com/bitrise-io/go-steputils/v2/stepconf"
@@ -23,8 +24,9 @@ var keys = []string{
 }
 
 type Input struct {
-	Verbose bool `env:"verbose,required"`
-	Retries int  `env:"retries,required"`
+	Verbose bool  `env:"verbose,required"`
+	Retries int   `env:"retries,required"`
+	Timeout int64 `env:"timeout,required"`
 }
 
 type RestoreCacheStep struct {
@@ -66,6 +68,7 @@ func (step RestoreCacheStep) Run() error {
 		StepId:         stepId,
 		Verbose:        input.Verbose,
 		Keys:           keys,
+		Timeout:        time.Duration(input.Timeout) * time.Second,
 		NumFullRetries: input.Retries,
 	})
 }

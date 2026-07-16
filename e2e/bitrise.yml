@@ -27,7 +27,7 @@ workflows:
         run_if: "true"
         is_skippable: false
         inputs:
-        - key: "{{ .OS }}-{{ .Arch }}-spm-cache-{{ checksum \"**/Package.resolved\" }}"
+        - key: "{{ getenv \"BITRISEIO_STACK_ID\" }}-spm-cache-{{ checksum \"**/Package.resolved\" }}"
         - paths: ~/Library/Developer/Xcode/DerivedData/**/SourcePackages
         - verbose: "true"
     - script:
@@ -41,6 +41,7 @@ workflows:
         is_skippable: false
         inputs:
         - verbose: "true"
+        - key: "{{ getenv \"BITRISEIO_STACK_ID\" }}-spm-cache-{{ checksum \"**/Package.resolved\" }}"
     - script:
         title: Resolve dependencies again
         inputs:

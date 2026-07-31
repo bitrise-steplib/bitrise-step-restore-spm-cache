@@ -14,6 +14,9 @@ import (
 
 const stepId = "restore-spm-cache"
 
+// EnvSwiftPackagesPath is exported by `bitrise-build-cache activate xcode`.
+const EnvSwiftPackagesPath = "BITRISE_XCODE_SOURCE_PACKAGES_PATH"
+
 // Cache key templates
 // OS + Arch: SPM works on Linux too, and Intel/ARM difference is important on macOS
 // checksum: Package.resolved is the dependency lockfile, either in the project root (pure Swift project)
@@ -21,6 +24,22 @@ const stepId = "restore-spm-cache"
 var keys = []string{
 	`{{ .OS }}-{{ .Arch }}-spm-cache-{{ checksum "**/Package.resolved" }}`,
 	`{{ .OS }}-{{ .Arch }}-spm-cache-`,
+}
+
+// Build Cache for Xcode relocates DerivedData and the SPM checkouts with it, so those archives hold
+// different absolute paths and restore replays an archive to its recorded paths. The marker sits
+// before "spm-cache" to keep both namespaces clear of each other's prefix fallback.
+var xcelerateKeys = []string{
+	`{{ .OS }}-{{ .Arch }}-xcelerate-spm-cache-{{ checksum "**/Package.resolved" }}`,
+	`{{ .OS }}-{{ .Arch }}-xcelerate-spm-cache-`,
+}
+
+func cacheKeys(envRepo env.Repository) []string {
+	if strings.TrimSpace(envRepo.Get(EnvSwiftPackagesPath)) != "" {
+		return xcelerateKeys
+	}
+
+	return keys
 }
 
 type Input struct {
@@ -56,9 +75,10 @@ func (step RestoreCacheStep) Run() error {
 		return fmt.Errorf("failed to parse inputs: %w", err)
 	}
 	stepconf.Print(input)
+	activeKeys := cacheKeys(step.envRepo)
 	step.logger.Println()
 	step.logger.Printf("Cache keys:")
-	step.logger.Printf(strings.Join(keys, "\n"))
+	step.logger.Printf(strings.Join(activeKeys, "\n"))
 	step.logger.Println()
 
 	step.logger.EnableDebugLog(input.Verbose)
@@ -67,7 +87,7 @@ func (step RestoreCacheStep) Run() error {
 	return restorer.Restore(cache.RestoreCacheInput{
 		StepId:         stepId,
 		Verbose:        input.Verbose,
-		Keys:           keys,
+		Keys:           activeKeys,
 		Timeout:        time.Duration(input.Timeout) * time.Second,
 		NumFullRetries: input.Retries,
 	})
